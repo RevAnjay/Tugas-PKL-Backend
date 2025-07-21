@@ -10,6 +10,13 @@ class ProductController extends Controller
 {
     public function add(Request $request)
     {
+        if (!Auth::check()) {
+            return response()->json([
+                'status' => 'unauthorized',
+                'message' => 'maaf kamu belum login',
+            ]);
+        }
+
         $validator = Validator::make($request->all(), [
             'nama_barang' => 'required',
             'harga' => 'required|integer',
@@ -36,6 +43,13 @@ class ProductController extends Controller
 
     public function get()
     {
+        if (!Auth::check()) {
+            return response()->json([
+                'status' => 'unauthorized',
+                'message' => 'maaf kamu belum login',
+            ]);
+        }
+
         $data = Product::all();
 
         if (!$data) {
@@ -50,6 +64,12 @@ class ProductController extends Controller
 
     public function update(Request $request, $id)
     {
+        if (!Auth::check()) {
+            return response()->json([
+                'status' => 'unauthorized',
+                'message' => 'maaf kamu belum login',
+            ]);
+        }
 
         $validator = Validator::make($request->all(), [
             'nama_barang' => 'required',
@@ -85,6 +105,13 @@ class ProductController extends Controller
 
     public function remove($id)
     {
+        if (!Auth::check()) {
+            return response()->json([
+                'status' => 'unauthorized',
+                'message' => 'maaf kamu belum login',
+            ]);
+        }
+
         $data = Product::find($id);
 
         if (!$data) {
