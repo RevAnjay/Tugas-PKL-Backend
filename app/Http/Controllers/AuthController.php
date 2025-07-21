@@ -70,4 +70,21 @@ class AuthController extends Controller
             'token' => $token,
         ]);
     }
+
+    public function logout()
+    {
+        if (!Auth::check()) {
+            return response()->json([
+                'status' => 'unauthorized',
+                'message' => 'maaf kamu belum login',
+            ]);
+        }
+
+        Auth::user()->tokens()->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'kamu telah berhasil logout',
+        ]);
+    }
 }
