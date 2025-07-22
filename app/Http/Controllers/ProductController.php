@@ -17,17 +17,22 @@ class ProductController extends Controller
             ]);
         }
 
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'nama_barang' => 'required',
             'harga' => 'required|integer',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'maaf data yang anda masukan tidak valid',
-            ]);
-        }
+        // $validator = Validator::make($request->all(), [
+        //     'nama_barang' => 'required',
+        //     'harga' => 'required|integer',
+        // ]);
+
+        // if ($validator->fails()) {
+        //     return response()->json([
+        //         'status' => 'failed',
+        //         'message' => 'maaf data yang anda masukan tidak valid',
+        //     ]);
+        // }
 
         Product::create([
             'nama_barang' => $request->nama_barang,
