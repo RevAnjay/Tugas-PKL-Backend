@@ -17,7 +17,9 @@ class IsAdmin
     {
         $user = $request->user();
 
-        if(!$user || $user->is_admin) return response()->json(['message' => 'Kamu tidak memiliki akses sebagai admin']);
+        if(!$user || !$user->is_admin) return response()->json([
+            'message' => 'Kamu tidak memiliki akses sebagai admin',
+        ]);
 
         return $next($request);
     }
