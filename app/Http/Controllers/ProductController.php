@@ -11,12 +11,10 @@ class ProductController extends Controller
 {
     public function add(Request $request)
     {
-        if (!Auth::check()) {
-            return response()->json([
-                'status' => 'unauthorized',
-                'message' => 'maaf kamu belum login',
-            ]);
-        }
+        if (!Auth::check()) return response()->json([
+            'status' => 'unauthorized',
+            'message' => 'maaf kamu belum login',
+        ]);
 
         $request->validate([
             'nama_barang' => 'required',
@@ -49,54 +47,44 @@ class ProductController extends Controller
 
     public function get()
     {
-        if (!Auth::check()) {
-            return response()->json([
-                'status' => 'unauthorized',
-                'message' => 'maaf kamu belum login',
-            ]);
-        }
+        if (!Auth::check()) return response()->json([
+            'status' => 'unauthorized',
+            'message' => 'maaf kamu belum login',
+        ]);
 
         $data = Product::all();
 
-        if (!$data) {
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'maaf barang tidak dapat ditemukan',
-            ]);
-        }
+        if (!$data) return response()->json([
+            'status' => 'failed',
+            'message' => 'maaf barang tidak dapat ditemukan',
+        ]);
 
         return response()->json($data);
     }
 
     public function update(Request $request, $id)
     {
-        if (!Auth::check()) {
-            return response()->json([
-                'status' => 'unauthorized',
-                'message' => 'maaf kamu belum login',
-            ]);
-        }
+        if (!Auth::check()) return response()->json([
+            'status' => 'unauthorized',
+            'message' => 'maaf kamu belum login',
+        ]);
 
         $validator = Validator::make($request->all(), [
             'nama_barang' => 'required',
             'harga' => 'required|integer',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
+        if ($validator->fails()) return response()->json([
                 'status' => 'failed',
                 'message' => 'maaf data yang anda masukan tidak valid',
             ]);
-        }
 
         $data = Product::find($id);
 
-        if (!$data) {
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'maaf barang dengan id tersebut tidak dapat ditemukan',
-            ]);
-        }
+        if (!$data) return response()->json([
+            'status' => 'failed',
+            'message' => 'maaf barang dengan id tersebut tidak dapat ditemukan',
+        ]);
 
         $data->update([
             'nama_barang' => $request->nama_barang,
@@ -111,21 +99,17 @@ class ProductController extends Controller
 
     public function remove($id)
     {
-        if (!Auth::check()) {
-            return response()->json([
-                'status' => 'unauthorized',
-                'message' => 'maaf kamu belum login',
-            ]);
-        }
+        if (!Auth::check())return response()->json([
+            'status' => 'unauthorized',
+            'message' => 'maaf kamu belum login',
+        ]);
 
         $data = Product::find($id);
 
-        if (!$data) {
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'maaf barang dengan id tersebut tidak dapat ditemukan',
-            ]);
-        }
+        if (!$data) return response()->json([
+            'status' => 'failed',
+            'message' => 'maaf barang dengan id tersebut tidak dapat ditemukan',
+        ]);
 
         $data->delete();
 
