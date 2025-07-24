@@ -14,7 +14,10 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('nama_barang');
+            $table->string('kategori');
             $table->integer('harga');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            // $table->foreign('user_id')->references('id')->cascadeOnDelete();
             $table->timestamps();
         });
     }
