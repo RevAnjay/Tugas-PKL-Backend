@@ -20,6 +20,5 @@ Route::middleware('auth:sanctum')->prefix('products')->group(function() {
     Route::post('add', [ProductController::class, 'add']);
     Route::get('get', [ProductController::class, 'get']);
     Route::put('update/{id}', [ProductController::class, 'update']);
+    Route::delete('remove/{id}', [ProductController::class, 'remove'])->middleware('IsAdmin');
 });
-
-Route::delete('/products/remove/{id}', [ProductController::class, 'remove'])->middleware('auth:sanctum', 'IsAdmin');
