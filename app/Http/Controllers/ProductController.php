@@ -18,7 +18,9 @@ class ProductController extends Controller
 
         $request->validate([
             'nama_barang' => 'required',
+            'kategori' => 'required',
             'harga' => 'required|integer',
+            'user_id' => 'required',
         ]);
 
         // $validator = Validator::make($request->all(), [
@@ -35,7 +37,9 @@ class ProductController extends Controller
 
         Product::create([
             'nama_barang' => $request->nama_barang,
+            'kategori' => $request->kategori,
             'harga' => $request->harga,
+            'user_id' => $request->user_id,
         ]);
 
         return response()->json([
@@ -71,7 +75,9 @@ class ProductController extends Controller
 
         $validator = Validator::make($request->all(), [
             'nama_barang' => 'required',
+            'kategori' => 'required',
             'harga' => 'required|integer',
+            'user_id' => 'required',
         ]);
 
         if ($validator->fails()) return response()->json([
@@ -88,7 +94,9 @@ class ProductController extends Controller
 
         $data->update([
             'nama_barang' => $request->nama_barang,
+            'kategori' => $request->kategori,
             'harga' => $request->harga,
+            'user_id' => $request->user_id,
         ]);
 
         return response()->json([
