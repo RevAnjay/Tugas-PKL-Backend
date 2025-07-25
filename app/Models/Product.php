@@ -17,4 +17,9 @@ class Product extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function Kategori()
+    {
+        return $this->belongsTo(Kategori::class, 'kategori');
+    }
 }
