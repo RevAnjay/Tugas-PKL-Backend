@@ -21,4 +21,5 @@ Route::middleware('auth:sanctum')->prefix('products')->group(function() {
     Route::get('get', [ProductController::class, 'get']);
     Route::put('update/{id}', [ProductController::class, 'update']);
     Route::delete('remove/{id}', [ProductController::class, 'remove'])->middleware('IsAdmin');
+    Route::post('kategori/add', [ProductController::class, 'kategori'])->middleware('IsAdmin');
 });

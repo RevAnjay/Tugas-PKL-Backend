@@ -15,7 +15,7 @@ class Product extends Model
 
     public function Owner()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function Kategori()

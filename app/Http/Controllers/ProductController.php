@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProductResource;
+use App\Models\Kategori;
 use Illuminate\Http\Request;
 use Validator;
 use App\Models\Product;
@@ -63,7 +65,7 @@ class ProductController extends Controller
             'message' => 'maaf barang tidak dapat ditemukan',
         ]);
 
-        return response()->json($data);
+        return ProductResource::collection($data);
     }
 
     public function update(Request $request, $id)
@@ -124,6 +126,19 @@ class ProductController extends Controller
         return response()->json([
             'status' => 'sukses',
             'message' => 'barang berhasil dihapus'
+        ]);
+    }
+
+    public function kategori(Request $request)
+    {
+        $request->validate([
+            'nama_kategori' => 'required|string',
+        ]);
+
+        Kategori::create(['nama_kategori'=>$request->nama_kategori]);
+
+        return response()->json([
+            'message' => 'kategori berhasil dibuat',
         ]);
     }
 }
