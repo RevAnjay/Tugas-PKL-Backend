@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ResponseHelper;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\StoreUserRequest;
+use App\Services\UserService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -12,6 +14,13 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    private UserService $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
     public function register(StoreUserRequest $request)
     {
         // $validator = Validator::make($request->all(), [
@@ -42,23 +51,9 @@ class AuthController extends Controller
         // ]);
 
         try {
-            $user = User::create([
-                'username' => $request->username,
-                'password' => Hash::make($request->password),
-            ]);
-
-            $token = $user->createToken('auth-token')->plainTextToken;
-
-            return response()->json([
-                'status' => 'sukses',
-                'message' => 'kamu telah berhasil register',
-                'token' => $token,
-            ]);
+            return ResponseHelper::success($this->userService->HandleSignUp($request), 'kamu berhasil register');
         } catch (\Throwable $thrw) {
-            return response()->json([
-                'status' => 'failed',
-                'message' => $thrw->getMessage(),
-            ]);
+            return ResponseHelper::error(message: $thrw->getMessage());
         }
     }
 
@@ -77,14 +72,15 @@ class AuthController extends Controller
         // }
 
         try {
-            $user = User::where('username', $request->username)->first();
-            $token = $user->createToken('auth-token')->plainTextToken;
-            return response()->json([
-                'status' => 'success',
-                'token' => $token,
-            ]);
-        } catch (\Exception $e) {
-            return response();
+            // $user = User::where('username', $request->username)->first();
+            // $token = $user->createToken('auth-token')->plainTextToken;
+            // return response()->json([
+            //     'status' => 'success',
+            //     'token' => $token,
+            // ]);
+            return ResponseHelper::success($this->userService->handleSignIn($request), 'kamu berhasil login');
+        } catch (\Throwable $thrw) {
+            return ResponseHelper::error(message: $thrw->getMessage());
         }
 
         // $user = User::where('username', $request->username)->first();
@@ -115,9 +111,6 @@ class AuthController extends Controller
 
         Auth::user()->tokens()->delete();
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'kamu telah berhasil logout',
-        ]);
+        return ResponseHelper::success(message: 'kamu berhasil logout');
     }
 }

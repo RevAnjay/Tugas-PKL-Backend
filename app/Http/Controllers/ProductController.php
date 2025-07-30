@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ResponseHelper;
+use App\Http\Requests\StoreProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Kategori;
+use App\Services\ProductService;
+use DB;
 use Illuminate\Http\Request;
 use Validator;
 use App\Models\Product;
@@ -11,44 +15,25 @@ use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
-    public function add(Request $request)
+    private ProductService $productService;
+
+    public function __construct(ProductService $productService)
     {
-        if (!Auth::check()) return response()->json([
-            'status' => 'unauthorized',
-            'message' => 'maaf kamu belum login',
-        ]);
+        $this->productService = $productService;
+    }
 
-        $request->validate([
-            'nama_barang' => 'required',
-            'kategori' => 'required',
-            'harga' => 'required|integer',
-            'user_id' => 'required',
-        ]);
+    public function add(StoreProductRequest $request)
+    {
+        DB::beginTransaction();
+        try {
+            $product = $this->productService->StoreProduct($request);
 
-        // $validator = Validator::make($request->all(), [
-        //     'nama_barang' => 'required',
-        //     'harga' => 'required|integer',
-        // ]);
-
-        // if ($validator->fails()) {
-        //     return response()->json([
-        //         'status' => 'failed',
-        //         'message' => 'maaf data yang anda masukan tidak valid',
-        //     ]);
-        // }
-
-        Product::create([
-            'nama_barang' => $request->nama_barang,
-            'kategori' => $request->kategori,
-            'harga' => $request->harga,
-            'user_id' => $request->user_id,
-        ]);
-
-        return response()->json([
-            'status' => 'sukses',
-            'message' => "berhasil menambahkan barang dengan nama: {$request->nama_barang}",
-        ]);
-
+            DB::commit();
+            return ResponseHelper::success($product, "berhasil menambahkan barang dengan nama: {$request->nama_barang}");
+        } catch (\Throwable $thrw) {
+            DB::rollBack();
+            return ResponseHelper::error(message: $thrw->getMessage());
+        }
     }
 
     public function get()
@@ -68,24 +53,12 @@ class ProductController extends Controller
         return ProductResource::collection($data);
     }
 
-    public function update(Request $request, $id)
+    public function update(StoreProductRequest $request, $id)
     {
         if (!Auth::check()) return response()->json([
             'status' => 'unauthorized',
             'message' => 'maaf kamu belum login',
         ]);
-
-        $validator = Validator::make($request->all(), [
-            'nama_barang' => 'required',
-            'kategori' => 'required',
-            'harga' => 'required|integer',
-            'user_id' => 'required',
-        ]);
-
-        if ($validator->fails()) return response()->json([
-                'status' => 'failed',
-                'message' => 'maaf data yang anda masukan tidak valid',
-            ]);
 
         $data = Product::find($id);
 
@@ -101,10 +74,7 @@ class ProductController extends Controller
             'user_id' => $request->user_id,
         ]);
 
-        return response()->json([
-            'status' => 'sukses',
-            'message' => 'barang berhasil diubah'
-        ]);
+        return ResponseHelper::success(message: 'barang berhasil diubah');
     }
 
     public function remove($id)
@@ -123,10 +93,7 @@ class ProductController extends Controller
 
         $data->delete();
 
-        return response()->json([
-            'status' => 'sukses',
-            'message' => 'barang berhasil dihapus'
-        ]);
+        return ResponseHelper::success(message: 'barang berhasil dihapus');
     }
 
     public function kategori(Request $request)

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\ResponseHelper;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -42,9 +43,6 @@ class StoreUserRequest extends FormRequest
 
     public function failedValidation(Validator $validator)
     {
-        throw new HttpResponseException(response()->json([
-            'status' => 'failed',
-            'message' => 'validasi gagal'
-        ]));
+        return ResponseHelper::error($validator->errors(), 'maaf validasi gagal');
     }
 }

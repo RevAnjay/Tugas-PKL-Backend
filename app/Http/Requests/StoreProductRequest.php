@@ -5,8 +5,9 @@ namespace App\Http\Requests;
 use App\Helpers\ResponseHelper;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
-class LoginRequest extends FormRequest
+class StoreProductRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +25,11 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => 'required|exists:users,username',
-            'password' => 'required',
+            'nama_barang' => 'required',
+            'images' => 'required|mimes:png,jpg',
+            'kategori' => 'required',
+            'harga' => 'required|integer',
+            'user_id' => 'required',
         ];
     }
 
