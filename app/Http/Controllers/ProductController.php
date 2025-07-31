@@ -55,45 +55,69 @@ class ProductController extends Controller
 
     public function update(StoreProductRequest $request, $id)
     {
-        if (!Auth::check()) return response()->json([
-            'status' => 'unauthorized',
-            'message' => 'maaf kamu belum login',
-        ]);
+        DB::beginTransaction();
+        try {
+            $data = Product::find($id);
+            $product = $this->productService->UpdateProduct($request, $data);
+            $data->update($product);
 
-        $data = Product::find($id);
+            DB::commit();
+            return ResponseHelper::success($data, 'barang berhasil diubah');
+        } catch (\Throwable $thrw) {
+            DB::rollBack();
+            return ResponseHelper::error(message: $thrw->getMessage());
+        }
+        // if (!Auth::check()) return response()->json([
+        //     'status' => 'unauthorized',
+        //     'message' => 'maaf kamu belum login',
+        // ]);
 
-        if (!$data) return response()->json([
-            'status' => 'failed',
-            'message' => 'maaf barang dengan id tersebut tidak dapat ditemukan',
-        ]);
+        // $data = Product::find($id);
 
-        $data->update([
-            'nama_barang' => $request->nama_barang,
-            'kategori' => $request->kategori,
-            'harga' => $request->harga,
-            'user_id' => $request->user_id,
-        ]);
+        // if (!$data) return response()->json([
+        //     'status' => 'failed',
+        //     'message' => 'maaf barang dengan id tersebut tidak dapat ditemukan',
+        // ]);
 
-        return ResponseHelper::success(message: 'barang berhasil diubah');
+        // $data->update([
+        //     'nama_barang' => $request->nama_barang,
+        //     'kategori' => $request->kategori,
+        //     'harga' => $request->harga,
+        //     'user_id' => $request->user_id,
+        // ]);
+
+        // return ResponseHelper::success(message: 'barang berhasil diubah');
     }
 
     public function remove($id)
     {
-        if (!Auth::check())return response()->json([
-            'status' => 'unauthorized',
-            'message' => 'maaf kamu belum login',
-        ]);
+        DB::beginTransaction();
+        try {
+            $product = Product::find($id);
+            $this->productService->RemoveImage($product);
+            $product->delete();
 
-        $data = Product::find($id);
+            DB::commit();
+            return ResponseHelper::success(message: "berhasil menghapus barang");
+        } catch (\Throwable $thrw) {
+            DB::rollBack();
+            return ResponseHelper::error(message: $thrw->getMessage());
+        }
+        // if (!Auth::check())return response()->json([
+        //     'status' => 'unauthorized',
+        //     'message' => 'maaf kamu belum login',
+        // ]);
 
-        if (!$data) return response()->json([
-            'status' => 'failed',
-            'message' => 'maaf barang dengan id tersebut tidak dapat ditemukan',
-        ]);
+        // $data = Product::find($id);
 
-        $data->delete();
+        // if (!$data) return response()->json([
+        //     'status' => 'failed',
+        //     'message' => 'maaf barang dengan id tersebut tidak dapat ditemukan',
+        // ]);
 
-        return ResponseHelper::success(message: 'barang berhasil dihapus');
+        // $data->delete();
+
+        // return ResponseHelper::success(message: 'barang berhasil dihapus');
     }
 
     public function kategori(Request $request)
